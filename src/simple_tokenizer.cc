@@ -53,8 +53,13 @@ std::string SimpleTokenizer::tokenize_query(const char *text, int textLen, int f
         }
         break;
     }
+    
     tmp.clear();
     std::copy(text + start, text + index, std::back_inserter(tmp));
+    std::string sc = SimpleTokenizer::get_pinyin()->get_ts(tmp);
+    if ((int) sc.length() > 0) {
+      tmp = sc;
+    }
     append_result(result, tmp, category, start, flags);
     start = index;
   }
@@ -130,8 +135,11 @@ int SimpleTokenizer::tokenize(void *pCtx, int flags, const char *text, int textL
   int start = 0;
   int index = 0;
   std::string result;
+  char subPinyinEndSign = 3;
+
   while (index < textLen) {
     TokenCategory category = from_char(text[index]);
+
     switch (category) {
       case TokenCategory::OTHER:
         index += PinYin::get_str_len(text[index]);
@@ -141,6 +149,12 @@ int SimpleTokenizer::tokenize(void *pCtx, int flags, const char *text, int textL
         }
         break;
     }
+
+    if ((flags & FTS5_TOKENIZE_QUERY) && category == TokenCategory::ASCII_ALPHABETIC && text[index] == subPinyinEndSign) {
+        index++;
+        result = result + subPinyinEndSign;
+    }
+
     if (category != TokenCategory::SPACE) {
       result.clear();
       std::copy(text + start, text + index, std::back_inserter(result));
@@ -148,11 +162,44 @@ int SimpleTokenizer::tokenize(void *pCtx, int flags, const char *text, int textL
         std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c) { return std::tolower(c); });
       }
 
-      rc = xToken(pCtx, 0, result.c_str(), (int)result.length(), start, index);
+      std::string s = SimpleTokenizer::get_pinyin()->get_ts(result);
+      if ((int) s.length()>0){
+        result=s;  
+      }
+      rc = xToken(pCtx, 0, result.c_str(), (int)result.length(), start, index);  
+
+      if ((int) result.length()>1) {
+        TokenCategory cat = from_char(result[0]);
+        if ((cat == TokenCategory::ASCII_ALPHABETIC || cat == TokenCategory::DIGIT) && (flags & FTS5_TOKENIZE_DOCUMENT)) {
+            for(int i=1; i<(int)result.length(); i++) {
+                rc = xToken(pCtx, FTS5_TOKEN_COLOCATED, result.substr(0, i).c_str(), i, start,  (int)result.substr(0, i).length());
+            }
+        }
+
+       if (result.length()>4 && (cat == TokenCategory::DIGIT) && (flags & FTS5_TOKENIZE_DOCUMENT)) {
+        for (int i=(int) result.length()-2;i>2;i--) {
+            std::string suffix = result.substr(i, (int)result.length());
+            rc = xToken(pCtx, FTS5_TOKEN_COLOCATED, suffix.c_str(), (int)suffix.length(), i,  (int)result.length());
+         }
+        }
+      }
+
       if (enable_pinyin && category == TokenCategory::OTHER && (flags & FTS5_TOKENIZE_DOCUMENT)) {
         const std::vector<std::string> &pys = SimpleTokenizer::get_pinyin()->get_pinyin(result);
-        for (const std::string &s : pys) {
+        for (const std::string &s : pys) {          
           rc = xToken(pCtx, FTS5_TOKEN_COLOCATED, s.c_str(), (int)s.length(), start, index);
+          if (SimpleTokenizer::get_pinyin()->is_sub_pinyin(s) && (int)s.length()!=1) {           
+            std::string appendixed = s + subPinyinEndSign;
+            rc = xToken(pCtx, FTS5_TOKEN_COLOCATED, appendixed.c_str(), (int)appendixed.length(), start, index);
+          }
+
+          if (flags & FTS5_TOKENIZE_DOCUMENT){
+            if ((int)s.length()>2){
+                for(int i=2;i<(int)s.length();i++){
+                    rc = xToken(pCtx, FTS5_TOKEN_COLOCATED, s.substr(0, i).c_str(), i, start, index);
+                }
+            }
+          }
         }
       }
     }

@@ -18,6 +18,16 @@ TEST(simple, tokenizer_with_pinyin) {
   query.push_back(R"VAGON(( z+h+o+u* OR zhou* ) AND "杰" AND "伦")VAGON");
   arr.push_back("杰伦 zhou 123");
   query.push_back(R"VAGON("杰" AND "伦" AND ( z+h+o+u* OR zhou* ) AND "123"*)VAGON");
+  arr.push_back("李安");
+  query.push_back(R"VAGON("李" AND "安")VAGON"); 
+  arr.push_back("驴子");
+  query.push_back(R"VAGON("驴" AND "子")VAGON"); 
+  arr.push_back("chrwhy@gmail.com");
+  query.push_back(R"VAGON(( c+h+r+w+h+y* OR chrwhy* ) AND "@" AND ( g+m+a+i+l* OR gmail* ) AND "." AND ( c+o+m* OR com* ))VAGON");
+  arr.push_back("中國");
+  query.push_back(R"VAGON("中" AND "国")VAGON"); 
+  arr.push_back("li|");
+  query.push_back(R"VAGON(( l+i* OR li* ) AND "|")VAGON"); 
   for (int i = 0; i < arr.size(); i++) {
     std::string s = arr[i];
     std::cout << s << " as doc:\n";

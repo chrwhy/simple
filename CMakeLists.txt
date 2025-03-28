@@ -45,6 +45,9 @@ include(contrib/CMakeRC.cmake)
 cmrc_add_resource_library(PINYIN_TEXT TYPE OBJECT NAMESPACE pinyin_text contrib/pinyin.txt)
 # https://github.com/vector-of-bool/cmrc/issues/17#issuecomment-659501280
 set_property(TARGET PINYIN_TEXT PROPERTY POSITION_INDEPENDENT_CODE ON)
+cmrc_add_resource_library(TS_TEXT TYPE OBJECT NAMESPACE ts_text contrib/t2s.txt)
+set_property(TARGET TS_TEXT PROPERTY POSITION_INDEPENDENT_CODE ON)
+
 
 # Code Coverage Configuration
 if(NOT TARGET coverage_config)
