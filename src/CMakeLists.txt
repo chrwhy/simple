@@ -49,9 +49,11 @@ else()
 endif()
 
 if(BUILD_SQLITE3)
-  target_link_libraries(simple PUBLIC coverage_config PRIVATE PINYIN_TEXT SQLite3)
+  #target_link_libraries(simple PUBLIC coverage_config PRIVATE PINYIN_TEXT SQLite3)
+  target_link_libraries(simple PUBLIC coverage_config PRIVATE TS_TEXT PINYIN_TEXT SQLite3)
 else()
-  target_link_libraries(simple PUBLIC coverage_config PRIVATE PINYIN_TEXT)
+  #target_link_libraries(simple PUBLIC coverage_config PRIVATE PINYIN_TEXT)
+  target_link_libraries(simple PUBLIC coverage_config PRIVATE TS_TEXT PINYIN_TEXT)
 endif()
 
 install(TARGETS simple DESTINATION bin)

@@ -13,6 +13,7 @@ chat.db
 examples/node/node_modules/
 examples/node/lib/
 examples/go/gosimple
+examples/go/example.db
 examples/go/libsimple-osx-x64/
 
 # CLion

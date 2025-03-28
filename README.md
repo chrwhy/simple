@@ -1,8 +1,21 @@
-[![Downloads](https://img.shields.io/github/downloads/wangfenjin/simple/total)](https://img.shields.io/github/downloads/wangfenjin/simple/total)
-[![build](https://github.com/wangfenjin/simple/workflows/CI/badge.svg)](https://github.com/wangfenjin/simple/actions?query=workflow%3ACI)
-[![codecov](https://codecov.io/gh/wangfenjin/simple/branch/master/graph/badge.svg?token=8SHLFZ3RB4)](https://codecov.io/gh/wangfenjin/simple)
-[![CodeFactor](https://www.codefactor.io/repository/github/wangfenjin/simple/badge)](https://www.codefactor.io/repository/github/wangfenjin/simple)
-[![License: MIT](https://img.shields.io/badge/Dual_License-MIT_or_GPL_v3_later-blue.svg)](https://github.com/wangfenjin/simple/blob/master/LICENSE)
+# Enhanced Simple tokenizer 
+
+#### 本项目是基于开源项目 "simple" fork而来(simple 是一个支持中文和拼音的 sqlite3 fts5 拓展)，在simple的基础上做了一些增强, 核心改动集中在 Query Parser 和 Tokenizer 2部分，包含以下：
+
+1. 增强了中文拼音搜索，使用open-pinyin作为外部的拼音query parser，修复了存在的一些bug，也使得拼音搜索更灵活，强大 (https://github.com/chrwhy/open-pinyin) 
+2. 增加了中文简繁体归一化，实现中文简繁体搜索
+3. 增加了数字的前缀+后缀分词（比如：手机号支持从号码起始位置搜索，也支持尾号搜索）
+4. 增加了英文的前缀分词
+5. 增加了一个规则简明的query parser
+6. 在 go example中增加了 REPL demo作为测试工具，提升开发测试效率
+
+
+除了核心tokenizer的改动，其余的实现在./examples/go中
+
+
+## 致敬原作者 @wangfenjin 
+#### 致敬原作者开源了一个优秀的项目, 以下为原项目的README，也可以移步 https://github.com/wangfenjin/simple 查看原项目
+
 
 # Simple tokenizer
 

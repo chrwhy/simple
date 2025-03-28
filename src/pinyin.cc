@@ -9,10 +9,38 @@
 #include <vector>
 
 CMRC_DECLARE(pinyin_text);
+CMRC_DECLARE(ts_text);
 
 namespace simple_tokenizer {
 
-PinYin::PinYin() { pinyin = build_pinyin_map(); }
+  std::map<std::string, std::string> find_prefix_elements(const std::set<std::string>& inputSet) {
+    std::map<std::string, std::string> result;
+    for (auto it = inputSet.begin(); it != inputSet.end(); ++it) {
+        auto next = std::next(it);
+        while (next != inputSet.end()) {
+            if (next->find(*it) == 0) { 
+                result[*it]=*it;
+                break;
+            }
+            ++next;
+        }
+    }
+
+    return result;
+}
+
+
+PinYin::PinYin() { 
+    pinyin = build_pinyin_map(); 
+    ts = build_ts_map();
+    sub_pinyins = find_prefix_elements(all_pinyins);
+ }
+
+const bool &PinYin::is_sub_pinyin(const std::string &pinyin){
+    auto it = sub_pinyins.find(pinyin);
+    return it != sub_pinyins.end();
+}
+
 
 std::set<std::string> PinYin::to_plain(const std::string &input) {
   std::set<std::string> s;
@@ -65,12 +93,39 @@ std::map<int, std::vector<std::string> > PinYin::build_pinyin_map() {
     std::getline(tokenStream, py, delimiter);
     int codepoint = static_cast<int>(std::stoul(cp.substr(2, cp.length() - 3), 0, 16l));
     std::set<std::string> s = to_plain(py);
+    std::copy(s.begin(), s.end(), std::inserter(all_pinyins, all_pinyins.end()));
     std::vector<std::string> m(s.size());
     std::copy(s.begin(), s.end(), m.begin());
     map[codepoint] = m;
   }
   return map;
 }
+
+
+
+// clang-format off
+std::map<std::string, std::string> PinYin::build_ts_map() {  
+  std::map<std::string, std::string> map;
+  
+  // clang-format on
+  auto fs = cmrc::ts_text::get_filesystem();
+  auto ts_data = fs.open("contrib/t2s.txt");
+  
+  std::istringstream ts_file(std::string(ts_data.begin(), ts_data.end()));
+  std::string line;
+  char delimiter = ':';
+  std::string t, s;
+  while (std::getline(ts_file, line)) {
+    if (line.length() == 0 || line[0] == '#') continue;
+    std::stringstream tokenStream(line);
+    std::getline(tokenStream, t, delimiter);
+    std::getline(tokenStream, s, delimiter);
+    map[t] = s;
+  }   
+  return map;
+}
+
+
 
 // Get UTF8 character encoding length(via first byte)
 int PinYin::get_str_len(unsigned char byte) {
@@ -105,6 +160,8 @@ int PinYin::codepoint(const std::string &u) {
 }
 
 const std::vector<std::string> &PinYin::get_pinyin(const std::string &chinese) { return pinyin[codepoint(chinese)]; }
+
+const std::string &PinYin::get_ts(const std::string &chinese) { return ts[chinese]; }
 
 std::vector<std::string> PinYin::_split_pinyin(const std::string &input, int begin, int end) {
   if (begin >= end) {

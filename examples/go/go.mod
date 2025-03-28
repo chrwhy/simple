@@ -1,5 +1,10 @@
-module github.com/wangfenjin/simple/examples/go
+module github.com/chrwhy/simple/examples/go
 
-go 1.17
+go 1.23
 
-require github.com/mattn/go-sqlite3 v1.14.12
+require (
+	github.com/chrwhy/open-pinyin v1.0.1
+	github.com/mattn/go-sqlite3 v1.14.12
+)
+
+replace github.com/chrwhy/open-pinyin => ../../../open-pinyin
