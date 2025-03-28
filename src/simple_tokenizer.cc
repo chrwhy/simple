@@ -152,7 +152,49 @@ int SimpleTokenizer::tokenize(void *pCtx, int flags, const char *text, int textL
       if (enable_pinyin && category == TokenCategory::OTHER && (flags & FTS5_TOKENIZE_DOCUMENT)) {
         const std::vector<std::string> &pys = SimpleTokenizer::get_pinyin()->get_pinyin(result);
         for (const std::string &s : pys) {
-          rc = xToken(pCtx, FTS5_TOKEN_COLOCATED, s.c_str(), (int)s.length(), start, index);
+          //if (s =="li") {
+          if (s=="nu" || s=="ru" || s=="tan" || s=="zhu" || s=="bi"
+             || s=="che" || s=="nin" || s=="nian" || s=="nü" || s=="chu"
+             || s=="na" || s=="lan" || s=="me" || s=="yin" || s=="man" || s=="ze"
+             || s=="ma" || s=="wa" || s=="kua" || s=="ga" || s=="zhua" || s=="qi"
+             || s=="ji" || s=="yo" || s=="qin" || s=="ben" || s=="le" || s=="sen"
+             || s=="xin" || s=="jian" || s=="sa" || s=="jin" || s=="men" || s=="pan"
+             || s=="gan" || s=="ti" || s=="huan" || s=="po" || s=="di" || s=="qia"
+             || s=="lian" || s=="se" || s=="bin" || s=="e" || s=="lia" || s=="gen"
+             || s=="zen" || s=="ran" || s=="hen" || s=="ken" || s=="kuan" || s=="pin"
+             || s=="za" || s=="he" || s=="fan" || s=="te" || s=="min" || s=="xu"
+             || s=="cen" || s=="zu" || s=="an" || s=="mi" || s=="she" || s=="ca"
+             || s=="ju" || s=="ne" || s=="yu" || s=="lü" || s=="pi" || s=="gu"
+             || s=="fo" || s=="ha" || s=="lin" || s=="yan" || s=="ba" || s=="fen"
+             || s=="ce" || s=="sha" || s=="hu" || s=="a" || s=="ta" || s=="zha"
+             || s=="chan" || s=="cha" || s=="xian" || s=="xia" || s=="cu" || s=="shen"
+             || s=="ya" || s=="zhen" || s=="gua" || s=="wan" || s=="o" || s=="shan"
+             || s=="li" || s=="shuan" || s=="ke" || s=="qu" || s=="ban" || s=="la"
+             || s=="nen" || s=="guan" || s=="mo" || s=="wen" || s=="lv" || s=="can"
+             || s=="su" || s=="ka" || s=="shua" || s=="shu" || s=="du" || s=="ren"
+             || s=="zan" || s=="zhan" || s=="fa" || s=="nan" || s=="chuan" || s=="lu"
+             || s=="pen" || s=="tu" || s=="dan" || s=="ku" || s=="re" || s=="da"
+             || s=="dia" || s=="han" || s=="ge" || s=="de" || s=="en" || s=="chua"
+             || s=="hua" || s=="ni" || s=="zhe" || s=="lo" || s=="xi" || s=="den"
+             || s=="kan" || s=="qian" || s=="zhuan" || s=="jia" || s=="chen" || s=="nv"
+             || s=="pa" || s=="san" || s=="yi") {            
+
+            std::string appendixed = s + "v";            
+            if ((int)s.length()!=1) {
+                rc = xToken(pCtx, FTS5_TOKEN_COLOCATED, appendixed.c_str(), (int)appendixed.length(), start, index);
+                rc = xToken(pCtx, FTS5_TOKEN_COLOCATED, s.c_str(), (int)s.length(), start, index);
+            } else {
+                rc = xToken(pCtx, FTS5_TOKEN_COLOCATED, s.c_str(), (int)s.length(), start, index);
+            }   
+          } else {
+            rc = xToken(pCtx, FTS5_TOKEN_COLOCATED, s.c_str(), (int)s.length(), start, index);
+          }
+
+          if ((int)s.length()>2){
+            for(int i=2;i<(int)s.length();i++){
+                rc = xToken(pCtx, FTS5_TOKEN_COLOCATED, s.substr(0, i).c_str(), i, start, index);
+            }
+          }
         }
       }
     }
