@@ -61,7 +61,8 @@ int main() {
   // load simple
   rc = sqlite3_enable_load_extension(db, 1);
   handle_rc(db, rc);
-  rc = sqlite3_load_extension(db, "libsimple", NULL, NULL);
+  string ext_path = get_current_dir() + "/libsimple";
+  rc = sqlite3_load_extension(db, ext_path.c_str(), NULL, NULL);
   handle_rc(db, rc);
   ms load_extension = Clock::now() - before;
   std::cout << "It took " << load_extension.count() << "ms to load extension" << std::endl;

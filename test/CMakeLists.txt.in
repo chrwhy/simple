@@ -1,11 +1,12 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.19)
 cmake_policy(SET CMP0057 NEW)
 
 project(googletest-download NONE)
 
 include(ExternalProject)
 ExternalProject_Add(googletest
-  URL https://github.com/google/googletest/archive/release-1.10.0.zip
+  URL https://github.com/google/googletest/archive/refs/tags/v1.14.0.zip
+  DOWNLOAD_EXTRACT_TIMESTAMP TRUE
   SOURCE_DIR        "${CMAKE_CURRENT_BINARY_DIR}/googletest-src"
   BINARY_DIR        "${CMAKE_CURRENT_BINARY_DIR}/googletest-build"
   CONFIGURE_COMMAND ""

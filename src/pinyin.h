@@ -151,7 +151,7 @@ class PinYin {
  public:
   const std::vector<std::string> &get_pinyin(const std::string &chinese);
   const std::string &get_ts(const std::string &t);
-  const bool &is_sub_pinyin(const std::string &pinyin);
+  bool is_sub_pinyin(const std::string &pinyin);
   static int get_str_len(unsigned char byte);
   std::set<std::string> split_pinyin(const std::string &input);
   PinYin();

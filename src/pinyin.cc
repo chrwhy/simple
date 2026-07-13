@@ -36,7 +36,7 @@ PinYin::PinYin() {
     sub_pinyins = find_prefix_elements(all_pinyins);
  }
 
-const bool &PinYin::is_sub_pinyin(const std::string &pinyin){
+bool PinYin::is_sub_pinyin(const std::string &pinyin){
     auto it = sub_pinyins.find(pinyin);
     return it != sub_pinyins.end();
 }

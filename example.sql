@@ -1,7 +1,7 @@
 -- Examples to use simple tokenizer
 
 -- load so file
-.load libsimple
+.load ./libsimple
 
 select '启用拼音分词：';
 -- set tokenize to simple
